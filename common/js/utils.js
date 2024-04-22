@@ -3,7 +3,7 @@ class Utils {
 
 	// 构造函数，定义常量
 	constructor() {
-		this.baseUrl = 'http://159.75.169.224:7300/pz'
+		this.baseUrl = 'http://localhost:8080/mgb';
 	}
 
 	// 获取用户信息的工具
@@ -12,29 +12,30 @@ class Utils {
 		uni.login({
 			// 获取登录信息，信息获取成功调用api
 			success: (res) => {
+				console.log('code', res);
 				this.request({
 					showLoading: true,
 					url: '/auth/wxLogin',
 					data: {
-						code: res.code
+						code: res.code,
 					},
 					success: (res) => {
-						console.log(res)
-					}
-				})
-			}
-		})
+						console.log(res);
+					},
+				});
+			},
+		});
 	}
 
 	request(option = {
-		showLoading: false
+		showLoading: false,
 	}) {
 		// 判断url是否存在，不存在直接结束
 		if (!option.url) {
 			return false;
 		}
 		if (option.showLoading) {
-			this.showLoading()
+			this.showLoading();
 		}
 		// 发送请求
 		uni.request({
@@ -43,54 +44,55 @@ class Utils {
 			header: option.header ? option.header : {},
 			method: option.method ? option.method : 'GET',
 			success: (response) => {
-				this.closeLoading()
+				this.closeLoading();
+				console.log('success', response);
 				// 返回失败数据
-				if (response.data.code != 10000) {
+				if (!response.data.success) {
 					// 将失败的数据返回出去
 					if (option.fail && typeof option.fail == 'function') {
-						option.fail(response)
+						option.fail(response.data);
 					}
 				} else {
 					// 将成功的数据返回出去
 					if (option.success && typeof option.success == 'function') {
-						option.success(response.data)
+						option.success(response.data);
 					}
 				}
 			},
 			fail: (response) => {
-				this.closeLoading()
-				// console.log(response)
-			}
+				this.closeLoading();
+				console.log('fail', response);
+			},
 
-		})
+		});
 	}
 
 	// 创建加载的loading效果
 	showLoading() {
-		const isShowLoading = uni.getStorageSync('isShowLoading')
+		const isShowLoading = uni.getStorageSync('isShowLoading');
 		if (isShowLoading) {
-			uni.hideLoading()
-			uni.setStorageSync('isShowLoading', false)
+			uni.hideLoading();
+			uni.setStorageSync('isShowLoading', false);
 		}
 		uni.showLoading({
 			title: '加载中。。。',
 			complete: () => {
-				uni.setStorageSync('isShowLoading', true)
+				uni.setStorageSync('isShowLoading', true);
 			},
 			fail: () => {
-				uni.setStorageSync('isShowLoading', false)
-			}
-		})
+				uni.setStorageSync('isShowLoading', false);
+			},
+		});
 	}
 
 	// 关闭加载动画
 	closeLoading() {
-		const isShowLoading = uni.getStorageSync('isShowLoading')
+		const isShowLoading = uni.getStorageSync('isShowLoading');
 		if (isShowLoading) {
-			uni.hideLoading()
-			uni.setStorageSync('isShowLoading', false)
+			uni.hideLoading();
+			uni.setStorageSync('isShowLoading', false);
 		}
 	}
 }
 
-export default new Utils()
+export default new Utils();

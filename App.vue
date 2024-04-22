@@ -4,14 +4,6 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch');
-			// 缓存数据
-			Utils.request({
-				url: '/app/init',
-				success: (res) => {
-					console.log(res);
-					// uni.setStorageSync('cfg', res.data.cfg);
-				},
-			});
 		},
 		onShow: function() {
 			console.log('App Show');
